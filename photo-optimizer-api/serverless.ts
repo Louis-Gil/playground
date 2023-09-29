@@ -24,15 +24,31 @@ const config: AWS = {
 			role: {
 				statements: [
 					{
+						Action: ['s3:PutObject', 's3:GetObject', 's3:DeleteObject'],
+						Effect: 'Allow',
+						Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/raw/*`,
+					},
+					{
 						Action: ['s3:PutObject', 's3:GetObject'],
 						Effect: 'Allow',
-						Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/*`,
+						Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/photo/*`,
 					},
 				],
 			},
 		},
 	},
 	functions: {
+    getSignedURL: {
+      handler: 'handler.getSignedURL',
+      events: [
+        {
+          httpApi: {
+            path: '/get-signed-url',
+            method: 'get',
+          },
+        },
+      ],
+    },
 		optimizeAndUpload: {
 			handler: 'handler.optimizeAndUpload',
 			events: [

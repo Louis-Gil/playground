@@ -24,7 +24,7 @@ const resources = {
 						{
 							Action: 's3:GetObject',
 							Effect: 'Allow',
-							Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/*`,
+							Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/photo/*`,
 							Principal: {
 								CanonicalUser: { 'Fn::GetAtt': ['OAI', 'S3CanonicalUserId'] },
 							},
