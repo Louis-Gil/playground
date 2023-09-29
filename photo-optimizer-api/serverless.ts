@@ -19,6 +19,7 @@ const config: AWS = {
 			ROOT_DOMAIN: process.env.ROOT_DOMAIN!,
 			SUB_DOMAIN: process.env.SUB_DOMAIN!,
 			ACM_CERTIFICATE_ARN: process.env.ACM_CERTIFICATE_ARN!,
+			DISTRIBUTION_ID: { Ref: 'PhotoCdn' },
 		},
 		iam: {
 			role: {
@@ -33,36 +34,15 @@ const config: AWS = {
 						Effect: 'Allow',
 						Resource: `arn:aws:s3:::${process.env.BUCKET_NAME}/photo/*`,
 					},
+					{
+						Action: ['cloudfront:CreateInvalidation'],
+						Effect: 'Allow',
+						Resource: '*',
+					},
 				],
 			},
 		},
 	},
-	functions: {
-    getSignedURL: {
-      handler: 'handler.getSignedURL',
-      events: [
-        {
-          httpApi: {
-            path: '/get-signed-url',
-            method: 'get',
-          },
-        },
-      ],
-    },
-		optimizeAndUpload: {
-			handler: 'handler.optimizeAndUpload',
-			events: [
-				{
-					httpApi: {
-						path: '/optimize-and-upload',
-						method: 'put',
-					},
-				},
-			],
-		},
-	},
-	plugins: ['serverless-plugin-scripts', 'serverless-webpack'],
-	resources,
 	custom: {
 		scripts: {
 			hooks: {
@@ -71,6 +51,35 @@ const config: AWS = {
 			},
 		},
 	},
+	functions: {
+		getSignedURL: {
+			handler: 'handler.getSignedURL',
+			events: [
+				{
+					httpApi: {
+						path: '/get-signed-url',
+						method: 'get',
+					},
+				},
+			],
+		},
+		optimizeAndUpload: {
+			handler: 'handler.optimizeAndUpload',
+			timeout: 900,
+			events: [
+				{
+					s3: {
+						bucket: process.env.BUCKET_NAME!,
+						event: 's3:ObjectCreated:*',
+						rules: [{ prefix: 'raw/' }],
+						existing: true,
+					},
+				},
+			],
+		},
+	},
+	plugins: ['serverless-plugin-scripts', 'serverless-webpack'],
+	resources,
 };
 
 export = config;
