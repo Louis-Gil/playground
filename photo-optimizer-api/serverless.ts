@@ -76,6 +76,7 @@ const config: AWS = {
 					},
 				},
 			],
+			// provisionedConcurrency: 1,
 		},
 	},
 	plugins: ['serverless-plugin-scripts', 'serverless-webpack'],

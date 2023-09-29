@@ -11,11 +11,14 @@ const cloudfront = new AWS.CloudFront();
 
 export const getSignedURL: APIGatewayProxyHandlerV2<unknown> = async () => {
 	const photoKey = `${new Date().getTime()}${Math.random()}`;
-	const uploadURL = await s3.getSignedUrlPromise('putObject', {
+
+	const acceleratedS3 = new AWS.S3({ useAccelerateEndpoint: true });
+	const uploadURL = await acceleratedS3.getSignedUrlPromise('putObject', {
 		Bucket: process.env.BUCKET_NAME!,
 		Key: `raw/${photoKey}.jpg`,
 		Expires: 5 * 60,
 	});
+  
 	const cdnURL = `https://${process.env.SUB_DOMAIN}.${process.env.ROOT_DOMAIN}/photo/${photoKey}.jpg`;
 	return { cdnURL, uploadURL };
 };

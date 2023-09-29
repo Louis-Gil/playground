@@ -13,6 +13,18 @@ const resources = {
 			Type: 'AWS::S3::Bucket',
 			Properties: {
 				BucketName: process.env.BUCKET_NAME!,
+				AccelerateConfiguration: {
+					AccelerationStatus: 'Enabled',
+				},
+				LifecycleConfiguration: {
+					Rules: [
+						{
+							Id: 'DeleteContentAfter90Days',
+							Status: 'Enabled',
+							ExpirationInDays: 90,
+						},
+					],
+				},
 			},
 		},
 		PhotoBucketOAIPolicy: {
