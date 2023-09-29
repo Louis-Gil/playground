@@ -1,8 +1,34 @@
 # playground
 
-1. hello-api 
-   폴더: (hello-api-ts, hello-api-js)
-   특징: serverless 인프라 설정
-         로깅(api gateway 포함), 지표 추적, 대시보드 확인
+1. hello-api
+   
+   폴더:
+   - hello-api-ts
+   - hello-api-js
+
+   기능:
+   - return hello with query.name
+
+   특징:
+   - serverless 인프라 설정
+   - 로깅(api gateway 포함), 지표 추적, 대시보드 확인
    
    ![화면 캡처 2023-09-28 152658](https://github.com/Louis-Gil/playground/assets/110698263/2cfa9829-2853-4efb-8708-d1f4d1df9ed7)
+
+<hr>
+
+2. photo-optimizer-api
+
+   기능:
+   - 사진 최적화
+   - s3에 대량으로 올려도 이벤트 기반 최적화
+   
+   특징:
+   - route53, acm을 활용하여 cdn https 접근
+   - viewer protocal policy redirect http to https
+   - use public & private store at s3 1 bucket
+   - use s3 acclerate, lifeCyle, cache invalidation (* 비용 절감 대안 필요)
+   - event by s3 upload
+   - upload exe with tar.gz
+   - webpack config externals
+   - use envrc with example
