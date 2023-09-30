@@ -129,4 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# env
+*/.webpack
+*.envrc
+
+# assets
 /protect
