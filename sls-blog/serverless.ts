@@ -58,7 +58,7 @@ const config: AWS = {
 	frameworkVersion: '3',
 	provider: {
 		name: 'aws',
-		runtime: 'nodejs18.x',
+		runtime: 'nodejs14.x',
 		region: 'ap-northeast-2',
 		iam: { role: { statements: [PostTableRoleStatement] } },
 	},
