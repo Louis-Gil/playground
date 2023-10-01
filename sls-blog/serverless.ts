@@ -23,19 +23,54 @@ const functions = {
 	},
 };
 
+const PostTable = {
+	Type: 'AWS::DynamoDB::Table',
+	Properties: {
+		TableName: 'post',
+		KeySchema: [{ AttributeName: 'title', KeyType: 'HASH' }],
+		AttributeDefinitions: [{ AttributeName: 'title', AttributeType: 'S' }],
+		BillingMode: 'PAY_PER_REQUEST',
+	},
+};
+
+function getVariableName(expression: { [key: string]: unknown }): string {
+	return Object.keys(expression)[0];
+}
+
+const PostTableRoleStatement = {
+	Effect: 'Allow',
+	Action: [
+		'dynamodb:PutItem',
+		'dynamodb:GetItem',
+		'dynamodb:UpdateItem',
+		'dynamodb:DeleteItem',
+	],
+	Resource: { 'Fn::GetAtt': [getVariableName({ PostTable }), 'Arn'] },
+};
+
+const dynamodbLocal = {
+	stages: ['dev'],
+	start: { migrate: true },
+};
+
 const config: AWS = {
 	service: 'simple-blog',
 	frameworkVersion: '3',
 	provider: {
 		name: 'aws',
-		runtime: 'nodejs14.x',
+		runtime: 'nodejs18.x',
 		region: 'ap-northeast-2',
+		iam: { role: { statements: [PostTableRoleStatement] } },
 	},
 	functions,
-	plugins: ['serverless-webpack'],
+	plugins: [
+		'serverless-webpack',
+		'serverless-offline',
+	],
 	resources: {
-		Resources: {},
+		Resources: { PostTable },
 	},
+  custom: { dynamodb: dynamodbLocal },
 };
 
 export = config;

@@ -7,9 +7,9 @@ export const createPost: APIGatewayProxyHandlerV2 = async (event) => {
 	if (!event.body) {
 		return { statusCode: 400, body: 'Bad Request' };
 	}
-	const { title, content } = JSON.parse(event.body) as Post;
+	const { title, content } = JSON.parse(event.body);
 	const created = new Date().toISOString();
-
+  
 	if (!(await storage.insert({ title, content, created }))) {
 		return { statusCode: 400, body: 'Bad Request' };
 	}

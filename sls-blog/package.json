@@ -9,18 +9,21 @@
 	"engines": {
 		"node": ">=14.15.0"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"fast-equals": "^5.0.1"
+	},
 	"devDependencies": {
 		"@serverless/typescript": "3.30.1",
 		"@types/aws-lambda": "^8.10.122",
 		"@types/node": "18.18.0",
+		"serverless-offline": "^13.1.1",
 		"serverless-plugin-scripts": "^1.0.2",
 		"serverless-webpack": "^5.13.0",
 		"ts-loader": "^9.4.4",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.2.2"
 	},
-  "optionalDependencies": {
+	"optionalDependencies": {
 		"aws-sdk": "2.1467.0"
 	},
 	"author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
