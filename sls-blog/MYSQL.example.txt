@@ -1,0 +1,86 @@
+const MySQLDBInstance = {
+	Type: 'AWS::RDS::DBInstance',
+	Properties: {
+		AllocatedStorage: '5',
+		DBInstanceClass: 'db.t3.micro',
+		Engine: 'MySQL',
+		DBName: 'blog',
+		MasterUsername: process.env.MYSQL_ROOT_USER,
+		MasterUserPassword: process.env.MYSQL_ROOT_PASSWORD,
+		PubliclyAccessible: true,
+	},
+	DeletionPolicy: 'Snapshot',
+};
+
+npm install mysql2
+
+module.exports = {
+  plugins: [
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^cardinal$/,
+      contextRegExp: /./,
+    })
+  ]
+}
+
+
+-- storage.ts --
+import {
+  Connection,
+  OkPacket,
+  RowDataPacket,
+  createConnection,
+} from "mysql2/promise";
+
+const connectionPromise = createConnection({
+  host: process.env.IS_OFFLINE ? "127.0.0.1" : process.env.MYSQL_HOST,
+  user: process.env.IS_OFFLINE ? "root" : process.env.MYSQL_ROOT_USER,
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: "blog",
+});
+
+async function doQuery<R>(
+  dbWork: (connection: Connection) => Promise<R>
+): Promise<R> {
+  const connection = await connectionPromise;
+  return dbWork(connection);
+}
+
+export async function insert(post: Post): Promise<boolean> {
+  try {
+    await doQuery((connection) =>
+      connection.execute(
+        `INSERT INTO post (title, content, created, modified) VALUES (?, ?, ?, NULL)`,
+        [post.title, post.content, post.created]
+      )
+    );
+  } catch (error: any) {
+    if (/Duplicate entry/.test(error.message)) {
+      return false;
+    }
+    throw error;
+  }
+  return true;
+}
+
+export async function select(title: string): Promise<Post | null> {
+  const [rows] = await doQuery((connection) =>
+    connection.execute<RowDataPacket[]>(`SELECT * FROM post WHERE title = ?`, [
+      title,
+    ])
+  );
+  const [row] = rows ?? [];
+  if (!row) {
+    return null;
+  }
+  return {
+    title: row["title"],
+    content: row["content"],
+    created: row["created"],
+    modified: row["modified"],
+  };
+}
+
+-- mysql shell --
+CREATE DATABASE blog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE TABLE post (title ... content ... create ... modified ...);
