@@ -1,26 +1,74 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Post, PostListItem } from './models';
+import {
+	createPost,
+	deletePost,
+	fetchPost,
+	fetchPostListItems,
+	updatePost,
+} from './server';
+import { Editor, PostList, Viewer } from './Components';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+	const [postItems, setPostItems] = React.useState<PostListItem[]>([]);
+	const [post, setPost] = React.useState<Post | null>(null);
+	const [editMode, setEditMode] = React.useState<boolean>(false);
+
+	function refreshPostList() {
+		fetchPostListItems().then(setPostItems).catch(alert);
+	}
+
+	React.useEffect(() => {
+		refreshPostList();
+	}, []);
+
+	if (!editMode) {
+		if (post) {
+			return (
+				<Viewer
+					post={post}
+					onStartEdit={() => setEditMode(true)}
+					onBack={() => setPost(null)}
+				/>
+			);
+		}
+		return (
+			<PostList
+				postItems={postItems}
+				onView={(title) => {
+					setEditMode(false);
+					fetchPost(title).then(setPost).catch(alert);
+				}}
+				onNew={() => {
+					setPost(null);
+					setEditMode(true);
+				}}
+			/>
+		);
+	}
+	return (
+		<Editor
+			post={post}
+			onSave={(title, content) =>
+				(post
+					? updatePost(post.title, title, content)
+					: createPost(title, content)
+				)
+					.then(() => fetchPost(title).then(setPost).catch(alert))
+					.then(() => setEditMode(false))
+					.then(() => refreshPostList())
+					.catch(alert)
+			}
+			onCancel={() => setEditMode(false)}
+			onDelete={() =>
+				post
+					? deletePost(post.title)
+							.then(() => setPost(null))
+							.then(() => setEditMode(false))
+							.then(() => refreshPostList())
+							.catch(alert)
+					: 0
+			}
+		/>
+	);
 }
-
-export default App;
