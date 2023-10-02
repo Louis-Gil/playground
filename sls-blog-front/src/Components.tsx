@@ -2,26 +2,21 @@ import React from 'react';
 import { Post, PostListItem } from './models';
 import { formatDate } from './utils';
 import nl2br from 'react-nl2br';
+import { Link } from 'react-router-dom';
 
-export function PostList({
-	postItems,
-	onView,
-	onNew,
-}: {
-	postItems: PostListItem[];
-	onView: (title: string) => void;
-	onNew: () => void;
-}) {
+export function PostList({ postItems }: { postItems: PostListItem[] }) {
 	return (
 		<div>
 			<ul>
 				{postItems.map((item) => (
-					<li key={item.title} onClick={() => onView(item.title)}>
-						[{formatDate(item.created)}] {item.title}
+					<li key={item.title}>
+						<Link to={`/${item.title}`}>
+							[{formatDate(item.created)}] {item.title}
+						</Link>
 					</li>
 				))}
 			</ul>
-			<button onClick={onNew}>New Post</button>
+			<Link to="/_new">새 글</Link>
 		</div>
 	);
 }
@@ -39,28 +34,21 @@ export function DateField({ label, date }: { label: string; date?: string }) {
 	);
 }
 
-export function Viewer({
-	post,
-	onStartEdit,
-	onBack,
-}: {
-	post: Post;
-	onStartEdit: () => void;
-	onBack: () => void;
-}) {
+export function Viewer({ post }: { post: Post }) {
 	return (
 		<div>
 			<h1>{post.title}</h1>
 			<dl>
 				<DateField label="Created" date={post.created} />
 				<DateField label="Updated" date={post.modified} />
-				<dt>Content</dt>
+				<dt>내용</dt>
 				<dd>
 					<p>{nl2br(post.content)}</p>
 				</dd>
 			</dl>
-			<button onClick={onBack}>List</button>
-			<button onClick={onStartEdit}>Edit</button>
+			<Link to="/">목록</Link>
+			&nbsp;&nbsp;
+			<Link to={`/${post.title}/edit`}>수정</Link>
 		</div>
 	);
 }
@@ -81,7 +69,7 @@ export function Editor({
 	return (
 		<div>
 			<dl>
-				<dt>Title</dt>
+				<dt>제목</dt>
 				<dd>
 					<input
 						type="text"
@@ -92,7 +80,7 @@ export function Editor({
 				</dd>
 				<DateField label="Created" date={post?.created} />
 				<DateField label="Updated" date={post?.modified} />
-				<dt>Content</dt>
+				<dt>내용</dt>
 				<dd>
 					<textarea
 						defaultValue={content}
@@ -101,9 +89,9 @@ export function Editor({
 					/>
 				</dd>
 			</dl>
-			<button onClick={onCancel}>cancle</button>
-			<button onClick={() => onSave(title, content)}>save</button>
-			{post && <button onClick={onDelete}>delete</button>}
+			<button onClick={onCancel}>취소</button>
+			<button onClick={() => onSave(title, content)}>저장</button>
+			{post && <button onClick={onDelete}>삭제</button>}
 		</div>
 	);
 }
