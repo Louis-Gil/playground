@@ -19,7 +19,7 @@
 		"start": "cross-env PORT=4000 REACT_APP_SERVER= react-scripts start",
     "build:local": "cross-env REACT_APP_SERVER=http://localhost:3000 react-scripts build",
     "build:cors": "cross-env REACT_APP_SERVER=https://$API_ID.execute-api.$AWS_REGION.amazonaws.com react-scripts build",
-		"build": "cross-env REACT_APP_SERVER=http://API_GATEWAY react-scripts build",
+		"build": "cross-env REACT_APP_SERVER= react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"
 	},

@@ -43,12 +43,30 @@ const S3Origin = {
 	},
 };
 
+const APIOrigin = {
+	Id: 'APIOrigin',
+	DomainName: `${process.env.API_ID}.execute-api.${process.env.AWS_REGION}.amazonaws.com`,
+  CustomOriginConfig: {
+    OriginProtocolPolicy: 'https-only',
+    OriginSSLProtocols: ['TLSv1.2'],
+  },
+};
+
 const DefaultCacheBehavior = {
 	TargetOriginId: 'S3Origin',
 	ViewerProtocolPolicy: 'redirect-to-https',
 	Compress: true,
 	// Policy with caching enabled. Supports Gzip and Brotli compression.
 	CachePolicyId: '658327ea-f89d-4fab-a63d-7e88639e58f6',
+};
+
+const APIOriginCacheBehavior = {
+  TargetOriginId: 'APIOrigin',
+  PathPattern: '/api/*',
+  ViewerProtocolPolicy: 'https-only',
+  AllowedMethods: ['GET', 'HEAD', 'OPTIONS', 'PUT', 'POST', 'PATCH', 'DELETE'],
+  // Policy with caching disabled
+  CachePolicyId: '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
 };
 
 const Domain = `${process.env.SUB_DOMAIN}.${process.env.ROOT_DOMAIN}`;
@@ -72,8 +90,10 @@ const BlogStaticFileCdn = {
 			Enabled: true,
 			DefaultRootObject: 'index.html',
 			CustomErrorResponses: [CustomErrorResponse],
-			Origins: [S3Origin],
+			Origins: [S3Origin, APIOrigin],
 			DefaultCacheBehavior,
+      CacheBehaviors: [APIOriginCacheBehavior],
+      HttpVersion: 'http2',
 			Aliases: [Domain],
 			ViewerCertificate,
 		},
