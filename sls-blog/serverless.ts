@@ -61,6 +61,14 @@ const config: AWS = {
 		runtime: 'nodejs14.x',
 		region: 'ap-northeast-2',
 		iam: { role: { statements: [PostTableRoleStatement] } },
+    httpApi: {
+      cors: {
+        allowedOrigins: [process.env.CORS_ALLOW_ORIGIN!],
+        allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type'],
+        allowCredentials: true,
+      },
+    },
 	},
 	functions,
 	plugins: [
