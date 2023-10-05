@@ -1,5 +1,7 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
+const webpack = require('webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
 	mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
@@ -20,9 +22,19 @@ module.exports = {
 				test: /\.ts$/,
 				loader: 'ts-loader',
 				exclude: /node_modules/,
+				options: {
+					transpileOnly: true,
+				},
 			},
 		],
 	},
+	plugins: [
+		new ForkTsCheckerWebpackPlugin(),
+		new webpack.IgnorePlugin({
+			resourceRegExp: /^cardinal$/,
+			contextRegExp: /./,
+		}),
+	],
 	stats: 'normal',
 	externals: [/aws-sdk/],
 };

@@ -21,6 +21,14 @@ const functions = {
 		handler: 'handler.listPosts',
 		events: [{ httpApi: { path: '/api/post', method: 'get' } }],
 	},
+	serveStatic: {
+		handler: 'staticHandler.serveStatic',
+		events: [
+			{ http: { path: '/', method: 'get' } },
+			{ http: { path: '/{fileName}', method: 'get' } },
+			{ http: { path: '/static/{type}/{fileName}', method: 'get' } },
+		],
+	},
 };
 
 const PostTable = {
@@ -61,24 +69,36 @@ const config: AWS = {
 		runtime: 'nodejs14.x',
 		region: 'ap-northeast-2',
 		iam: { role: { statements: [PostTableRoleStatement] } },
-    httpApi: {
-      cors: {
-        allowedOrigins: [process.env.CORS_ALLOW_ORIGIN!],
-        allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type'],
-        allowCredentials: true,
-      },
-    },
+		httpApi: {
+			cors: {
+				allowedOrigins: [process.env.CORS_ALLOW_ORIGIN!],
+				allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+				allowedHeaders: ['Content-Type'],
+				allowCredentials: true,
+			},
+		},
 	},
 	functions,
 	plugins: [
+		'serverless-plugin-scripts',
 		'serverless-webpack',
 		'serverless-offline',
 	],
 	resources: {
 		Resources: { PostTable },
 	},
-  custom: { dynamodb: dynamodbLocal },
+	custom: {
+		dynamodb: dynamodbLocal,
+		scripts: {
+			hooks: {
+				'webpack:package:packExternalModules':
+					'[ -d .webpack/serveStatic ] && cp -r ../sls-blog-front/build .webpack/serveStatic/pages || true',
+			},
+		},
+	},
+	package: {
+		individually: true,
+	},
 };
 
 export = config;
