@@ -5,3 +5,15 @@
 
 # CORS를 허용할 오리진
 export CORS_ALLOW_ORIGIN=
+
+# CloudFront에 부여할 루트 도메인
+export ROOT_DOMAIN=
+
+# CloudFront에 부여할 서브 도메인
+export SUB_DOMAIN=
+
+# AWS CLI를 사용하기 위한 환경 변수
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+
+export ACM_CERTIFICATE_ARN=

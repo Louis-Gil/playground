@@ -12,6 +12,7 @@
 	"dependencies": {
 		"fast-equals": "^5.0.1",
 		"mime-types": "^2.1.35",
+		"serverless-domain-manager": "^7.1.2",
 		"webpack": "^5.88.2"
 	},
 	"devDependencies": {

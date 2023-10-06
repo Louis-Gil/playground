@@ -81,8 +81,9 @@ const config: AWS = {
 	functions,
 	plugins: [
 		'serverless-plugin-scripts',
-		'serverless-webpack',
 		'serverless-offline',
+		'serverless-webpack',
+    "serverless-domain-manager",
 	],
 	resources: {
 		Resources: { PostTable },
@@ -95,6 +96,13 @@ const config: AWS = {
 					'[ -d .webpack/serveStatic ] && cp -r ../sls-blog-front/build .webpack/serveStatic/pages || true',
 			},
 		},
+    customDomain: {
+      apiType: 'http',
+      domainName: `${process.env.SUB_DOMAIN}.${process.env.ROOT_DOMAIN}`,
+      certificateArn: process.env.ACM_CERTIFICATE_ARN!,
+      endpointType: 'regional',
+      createRoute53Record: true,
+    }
 	},
 	package: {
 		individually: true,
