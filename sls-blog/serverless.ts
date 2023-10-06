@@ -3,23 +3,23 @@ import type { AWS } from '@serverless/typescript';
 const functions = {
 	createPost: {
 		handler: 'handler.createPost',
-		events: [{ httpApi: { path: '/api/post', method: 'post' } }],
+		events: [{ http: { path: '/api/post', method: 'post' } }],
 	},
 	readPost: {
 		handler: 'handler.readPost',
-		events: [{ httpApi: { path: '/api/post/{title}', method: 'get' } }],
+		events: [{ http: { path: '/api/post/{title}', method: 'get' } }],
 	},
 	updatePost: {
 		handler: 'handler.updatePost',
-		events: [{ httpApi: { path: '/api/post/{title}', method: 'put' } }],
+		events: [{ http: { path: '/api/post/{title}', method: 'put' } }],
 	},
 	deletePost: {
 		handler: 'handler.deletePost',
-		events: [{ httpApi: { path: '/api/post/{title}', method: 'delete' } }],
+		events: [{ http: { path: '/api/post/{title}', method: 'delete' } }],
 	},
 	listPosts: {
 		handler: 'handler.listPosts',
-		events: [{ httpApi: { path: '/api/post', method: 'get' } }],
+		events: [{ http: { path: '/api/post', method: 'get' } }],
 	},
 	serveStatic: {
 		handler: 'staticHandler.serveStatic',
@@ -69,6 +69,14 @@ const config: AWS = {
 		runtime: 'nodejs14.x',
 		region: 'ap-northeast-2',
 		iam: { role: { statements: [PostTableRoleStatement] } },
+		apiGateway: {
+			minimumCompressionSize: 1024,
+			binaryMediaTypes: ['image/*'],
+		},
+		tracing: {
+			apiGateway: true,
+			lambda: true,
+		},
 		httpApi: {
 			cors: {
 				allowedOrigins: [process.env.CORS_ALLOW_ORIGIN!],
@@ -83,7 +91,7 @@ const config: AWS = {
 		'serverless-plugin-scripts',
 		'serverless-offline',
 		'serverless-webpack',
-    "serverless-domain-manager",
+		'serverless-domain-manager',
 	],
 	resources: {
 		Resources: { PostTable },
@@ -96,13 +104,13 @@ const config: AWS = {
 					'[ -d .webpack/serveStatic ] && cp -r ../sls-blog-front/build .webpack/serveStatic/pages || true',
 			},
 		},
-    customDomain: {
-      apiType: 'http',
-      domainName: `${process.env.SUB_DOMAIN}.${process.env.ROOT_DOMAIN}`,
-      certificateArn: process.env.ACM_CERTIFICATE_ARN!,
-      endpointType: 'regional',
-      createRoute53Record: true,
-    }
+		customDomain: {
+			apiType: 'rest',
+			domainName: `${process.env.SUB_DOMAIN}.${process.env.ROOT_DOMAIN}`,
+			certificateArn: process.env.ACM_CERTIFICATE_ARN!,
+			endpointType: 'edge',
+			createRoute53Record: true,
+		},
 	},
 	package: {
 		individually: true,
