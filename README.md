@@ -1,6 +1,6 @@
 # playground
 
-1. hello-api
+1. hello_api
 
    폴더:
 
@@ -20,7 +20,7 @@
 
 <hr>
 
-2. photo-optimizer-api
+2. photo_optimizer_api
 
    기능:
 
@@ -40,7 +40,7 @@
 
 <hr>
 
-3. sls-blog
+3. sls_blog
 
    폴더:
 
