@@ -49,15 +49,15 @@ class _QuizState extends State<Quiz> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.blue,
               Colors.purple,
+              Color.fromARGB(255, 168, 93, 181),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: screenWidget,
-        
+
         // child: activeScreen == 'start-screen'
         //     ? StartScreen(switchScreen)
         //     : const QuizScreen(),
