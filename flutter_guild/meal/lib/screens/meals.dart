@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meal/data/meal.dart';
+import 'package:meal/models/meal.dart';
 
 class MealsScreen extends StatelessWidget {
   const MealsScreen({
@@ -26,7 +26,7 @@ class MealsScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'No meals found, maybe check your filters?',
+            'Uh oh ... nothing here!',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                   color: Theme.of(context).colorScheme.onBackground,
                 ),
