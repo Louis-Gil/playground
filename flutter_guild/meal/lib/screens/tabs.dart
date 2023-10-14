@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meal/models/meal.dart';
 import 'package:meal/screens/categories.dart';
-import 'package:meal/screens/main_drawer.dart';
+import 'package:meal/screens/filter.dart';
+import 'package:meal/widgets/main_drawer.dart';
 import 'package:meal/screens/meals.dart';
 
 class TabsScreen extends StatefulWidget {
@@ -44,6 +45,17 @@ class _TabScreenState extends State<TabsScreen> {
     });
   }
 
+  void _setScreen(String identifer) {
+    Navigator.of(context).pop();
+    if (identifer == 'filters') {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => const FiltersScreen(),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget activePage = CategoriesScreen(
@@ -63,7 +75,9 @@ class _TabScreenState extends State<TabsScreen> {
       appBar: AppBar(
         title: Text(activePageTitle),
       ),
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(
+        onSelectScreen: _setScreen,
+      ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
