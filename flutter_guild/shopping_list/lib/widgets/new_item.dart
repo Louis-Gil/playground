@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/category.dart';
-import 'package:shopping_list/models/grocery_item.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -14,6 +17,9 @@ class NewItem extends StatefulWidget {
 }
 
 class _NewItemState extends State<NewItem> {
+  String firebaseDbKey = dotenv.get('FIREBASE_DB_KEY');
+  String firebaseDbTable = dotenv.get('FIREBASE_DB_TABLE');
+
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
   var _enteredQuantity = 1;
@@ -22,14 +28,21 @@ class _NewItemState extends State<NewItem> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(
-        GroceryItem(
-          id: DateTime.now().toString(),
-          name: _enteredName,
-          quantity: _enteredQuantity,
-          category: _selectedCategory,
+      final url = Uri.https(firebaseDbKey, firebaseDbTable);
+      http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
+            'name': _enteredName,
+            'quantity': _enteredQuantity,
+            'category': _selectedCategory.title,
+          },
         ),
       );
+      // Navigator.of(context).pop();
     }
   }
 
