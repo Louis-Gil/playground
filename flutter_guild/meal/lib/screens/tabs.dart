@@ -8,6 +8,7 @@ import 'package:meal/screens/meals.dart';
 import 'package:meal/provider/favorites_provider.dart';
 import 'package:meal/provider/filters_provider.dart';
 
+
 const kInitialFilters = {
   Filter.glutenFree: false,
   Filter.lactoseFree: false,
