@@ -32,7 +32,7 @@ class _NewItemState extends State<NewItem> {
       setState(() {
         _isSending = true;
       });
-      final url = Uri.https(firebaseDbKey, firebaseDbTable);
+      final url = Uri.https(firebaseDbKey, '$firebaseDbTable.json');
       final response = await http.post(
         url,
         headers: {
