@@ -46,6 +46,7 @@ func MakeWebHandler() http.Handler {
 	})
 	mux.HandleFunc("/bar", BarHandler)
 	mux.HandleFunc("/students", GetStudnetListHandler).Methods("GET")
+	mux.HandleFunc("/students/{id:[0-9]+}", GetStudentHandler).Methods("GET")
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	students = make(map[int]Student)
@@ -75,4 +76,17 @@ func GetStudnetListHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("content-type", "application/json")
 	json.NewEncoder(w).Encode(list)
+}
+
+func GetStudentHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	student, ok := students[id]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Add("content-type", "application/json")
+	json.NewEncoder(w).Encode(student)
 }
