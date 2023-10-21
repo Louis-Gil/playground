@@ -3,12 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func main () {
-	http.ListenAndServe(":8080", MakeWebHandler())
+	err := http.ListenAndServeTLS(":8080", "./../localhost.crt", "./../localhost.key", MakeWebHandler())
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 type Student struct {

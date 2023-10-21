@@ -38,4 +38,9 @@ go.work
 # dotenv environment variables file
 .env*
 
+# localhost https certificate
+localhost.crt
+localhost.csr
+localhost.key
+
 # End of https://www.toptal.com/developers/gitignore/api/go
