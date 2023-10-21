@@ -6,7 +6,11 @@ import (
 	"strconv"
 )
 
-func main() {
+func main () {
+	http.ListenAndServe(":8080", MakeWebHandler())
+}
+
+func MakeWebHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World")
@@ -14,7 +18,7 @@ func main() {
 	mux.HandleFunc("/bar", barHandler)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	http.ListenAndServe(":8080", mux)
+	return mux
 }
 
 func barHandler(w http.ResponseWriter, r *http.Request) {
