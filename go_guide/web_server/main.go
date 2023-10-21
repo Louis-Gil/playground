@@ -12,6 +12,7 @@ func main() {
 		fmt.Fprint(w, "Hello, World")
 	})
 	mux.HandleFunc("/bar", barHandler)
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.ListenAndServe(":8080", mux)
 }
