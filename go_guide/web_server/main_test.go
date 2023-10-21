@@ -39,16 +39,16 @@ func TestBarHandler(t *testing.T) {
 func TestJsonHandler(t *testing.T) {
 	assert := assert.New(t)
 	res := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/student", nil)
+	req := httptest.NewRequest("GET", "/students", nil)
 
 	mux := MakeWebHandler()
 	mux.ServeHTTP(res, req)
 
 	assert.Equal(http.StatusOK, res.Code)
-	student := new(Student)
-	err := json.NewDecoder(res.Body).Decode(student)
+	var list []Student
+	err := json.NewDecoder(res.Body).Decode(&list)
 	assert.Nil(err)
-	assert.Equal("duli", student.Name)
-	assert.Equal(20, student.Age)
-	assert.Equal(90, student.Score)
+	assert.Equal(2, len(list))
+	assert.Equal("duli", list[0].Name)
+	assert.Equal("delta", list[1].Name)
 }
