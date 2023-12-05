@@ -44,6 +44,33 @@ function HelloWorld(props) {
 		setCrowd(people);
 	}, []);
 
+	const handleSumit = (e) => {
+		e.preventDefault();
+
+		if (lastName !== '') {
+			addPerson(firstName, lastName, dob);
+		}
+	};
+
+	const addPerson = (newFirst, newLast, newDOB) => {
+		let newPerson = {
+			id: crowd.length + 1,
+			firstName: newFirst,
+			lastName: newLast,
+			dob: newDOB,
+		};
+
+		const newList = [...crowd, newPerson];
+
+		const sorted = newList.sort((a, b) => {
+			return a.lastName.localeCompare(b.lastName);
+		});
+		setCrowd(sorted);
+		setFirstName('');
+		setLastName('');
+		setDob('');
+	};
+
 	return (
 		<Fragment>
 			<hr />
@@ -59,7 +86,7 @@ function HelloWorld(props) {
 				Toggle isTrue
 			</a>
 			<hr />
-			<form autoComplete="off">
+			<form autoComplete="off" onSubmit={handleSumit}>
 				<Input
 					title="First Name"
 					name="firstName"
@@ -86,7 +113,10 @@ function HelloWorld(props) {
 					className="form-control"
 					onChange={(e) => setDob(e.target.value)}
 				></Input>
+
+				<input type="submit" value="Submit" className="btn btn-primary" />
 			</form>
+      <hr />
 
 			<div>
 				First Name: {firstName}
