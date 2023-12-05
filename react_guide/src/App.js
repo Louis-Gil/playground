@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import './App.css';
+import Input from './Input';
 
 function HelloWorld(props) {
 	const [isTrue, setIsTrue] = useState(false);
@@ -59,21 +60,42 @@ function HelloWorld(props) {
 			</a>
 			<hr />
 			<form autoComplete="off">
-				<div className="mb-3">
-					<label className="form-label">First Name</label>
-					<input
-						type="text"
-						name="firstName"
-						id="firstName"
-						autoComplete="firstNameNew"
-						className="form-control"
-						onChange={(e) => setFirstName(e.target.value)}
-					/>
-				</div>
+				<Input
+					title="First Name"
+					name="firstName"
+					inputType="text"
+					autoComplete="firstNameNew"
+					className="form-control"
+					onChange={(e) => setFirstName(e.target.value)}
+				></Input>
+
+				<Input
+					title="Last Name"
+					name="lastName"
+					inputType="text"
+					autoComplete="lastNameNew"
+					className="form-control"
+					onChange={(e) => setLastName(e.target.value)}
+				></Input>
+
+				<Input
+					title="Date of Birth"
+					name="dob"
+					inputType="date"
+					autoComplete="dobNew"
+					className="form-control"
+					onChange={(e) => setDob(e.target.value)}
+				></Input>
 			</form>
-      <div>
-        First Name: {firstName}
-      </div>
+
+			<div>
+				First Name: {firstName}
+				<br />
+				Last Name: {lastName}
+				<br />
+				Date of Birth: {dob}
+				<br />
+			</div>
 			<hr />
 			<h3>people</h3>
 			<ul className="list-group">
