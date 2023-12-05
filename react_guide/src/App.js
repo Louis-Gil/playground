@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import './App.css';
 import Input from './Input';
 
@@ -9,6 +9,10 @@ function HelloWorld(props) {
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [dob, setDob] = useState('');
+
+	const firstNameRef = useRef(null);
+	const lastNameRef = useRef(null);
+	const dobRef = useRef(null);
 
 	const toggleTrue = () => {
 		if (isTrue) {
@@ -69,6 +73,10 @@ function HelloWorld(props) {
 		setFirstName('');
 		setLastName('');
 		setDob('');
+
+		firstNameRef.current.value = '';
+		lastNameRef.current.value = '';
+		dobRef.current.value = '';
 	};
 
 	return (
@@ -91,6 +99,7 @@ function HelloWorld(props) {
 					title="First Name"
 					name="firstName"
 					inputType="text"
+					ref={firstNameRef}
 					autoComplete="firstNameNew"
 					className="form-control"
 					onChange={(e) => setFirstName(e.target.value)}
@@ -100,6 +109,7 @@ function HelloWorld(props) {
 					title="Last Name"
 					name="lastName"
 					inputType="text"
+					ref={lastNameRef}
 					autoComplete="lastNameNew"
 					className="form-control"
 					onChange={(e) => setLastName(e.target.value)}
@@ -109,6 +119,7 @@ function HelloWorld(props) {
 					title="Date of Birth"
 					name="dob"
 					inputType="date"
+					ref={dobRef}
 					autoComplete="dobNew"
 					className="form-control"
 					onChange={(e) => setDob(e.target.value)}
@@ -116,7 +127,7 @@ function HelloWorld(props) {
 
 				<input type="submit" value="Submit" className="btn btn-primary" />
 			</form>
-      <hr />
+			<hr />
 
 			<div>
 				First Name: {firstName}
