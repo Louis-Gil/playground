@@ -31,7 +31,7 @@ function App() {
               <Link to="/admin/movie/0" className="list-group-item list-group-item-action">
 								Add Movies
 							</Link>
-              <Link to="/admin" className="list-group-item list-group-item-action">
+              <Link to="/manage-catalog" className="list-group-item list-group-item-action">
 								Manage Catalogue
 							</Link>
               <Link to="/graphql" className="list-group-item list-group-item-action">
