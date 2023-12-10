@@ -25,6 +25,18 @@ function App() {
 							<a href="#!" className="list-group-item list-group-item-action">
 								Movies
 							</a>
+							<a href="#!" className="list-group-item list-group-item-action">
+								Genres
+							</a>
+              <a href="#!" className="list-group-item list-group-item-action">
+								Add Movies
+							</a>
+              <a href="#!" className="list-group-item list-group-item-action">
+								Manage Catalogue
+							</a>
+              <a href="#!" className="list-group-item list-group-item-action">
+								GraphQL
+							</a>
 						</div>
 					</nav>
 				</div>
