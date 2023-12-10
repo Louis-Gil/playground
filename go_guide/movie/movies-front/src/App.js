@@ -1,3 +1,5 @@
+import Home from './components/Home';
+
 function App() {
 	return (
 		<div className="container">
@@ -10,7 +12,7 @@ function App() {
 						<span className="badge bg-success">Login</span>
 					</a>
 				</div>
-        <hr className="mb-3" />
+				<hr className="mb-3" />
 			</div>
 
 			<div className="row">
@@ -26,7 +28,9 @@ function App() {
 						</div>
 					</nav>
 				</div>
-				<div className="col-md-10"></div>
+				<div className="col-md-10">
+					<Home />
+				</div>
 			</div>
 		</div>
 	);
