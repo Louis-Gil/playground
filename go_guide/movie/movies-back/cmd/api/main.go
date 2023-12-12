@@ -18,6 +18,8 @@ func main() {
 
 	log.Println("Starting server on port", port)
 
+	http.HandleFunc("/", Hello)
+
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		log.Fatal(err)
