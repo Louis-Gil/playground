@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import Input from './form/input';
 
 const Login = () => {
@@ -7,12 +7,22 @@ const Login = () => {
 	const [password, setPassword] = useState('');
 
 	const { setJwtToken } = useOutletContext();
+	const { setAlertClassName } = useOutletContext();
+	const { setAlertMessage } = useOutletContext();
+
+	const navigate = useNavigate();
 
 	const handleSummit = (event) => {
 		event.preventDefault();
 
 		if (email === 'admin@apple.com') {
 			setJwtToken('apple');
+			setAlertClassName('d-none');
+			setAlertMessage('');
+			navigate('/');
+		} else {
+			setAlertClassName('alert-danger');
+			setAlertMessage('Invalid email or password.');
 		}
 	};
 
