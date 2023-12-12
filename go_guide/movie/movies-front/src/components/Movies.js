@@ -5,18 +5,20 @@ const Movies = () => {
 	const [movies, setMovies] = useState([]);
 
 	useEffect(() => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
 
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    }
+		const requestOptions = {
+			method: 'GET',
+			headers: headers,
+		};
 
-    fetch('http://localhost:8000/movies/', requestOptions)
-      .then(response => response.json())
-      .then(data => setMovies(data))
-      .catch(error => console.log('error', error));
+		fetch('http://localhost:8080/movies', requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				setMovies(data);
+			})
+			.catch((error) => console.log('error', error));
 	}, []);
 	return (
 		<div>
@@ -36,8 +38,8 @@ const Movies = () => {
 							<td>
 								<Link to={`/movies/${movie.id}`}>{movie.title}</Link>
 							</td>
-              <td>{movie.release_date}</td>
-              <td>{movie.mpaa_rating}</td>
+							<td>{movie.release_date}</td>
+							<td>{movie.mpaa_rating}</td>
 						</tr>
 					))}
 				</tbody>
