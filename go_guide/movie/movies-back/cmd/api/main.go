@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 	app.DB = &dbrepo.PostgresDBRepo{DB: conn}
-	defer conn.Close()
+	defer app.DB.Connection().Close()
 	
 	app.Domain = "example.com"
 
