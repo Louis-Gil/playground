@@ -12,9 +12,9 @@ import (
 const port = 8080
 
 type application struct {
-	DSN string
+	DSN    string
 	Domain string
-	DB repository.DatabaseRepo
+	DB     repository.DatabaseRepo
 }
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 	}
 	app.DB = &dbrepo.PostgresDBRepo{DB: conn}
 	defer app.DB.Connection().Close()
-	
+
 	app.Domain = "example.com"
 
 	log.Println("Starting server on port", port)
