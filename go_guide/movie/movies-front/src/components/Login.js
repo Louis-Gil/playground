@@ -15,15 +15,35 @@ const Login = () => {
 	const handleSummit = (event) => {
 		event.preventDefault();
 
-		if (email === 'admin@apple.com') {
-			setJwtToken('apple');
-			setAlertClassName('d-none');
-			setAlertMessage('');
-			navigate('/');
-		} else {
-			setAlertClassName('alert-danger');
-			setAlertMessage('Invalid email or password.');
-		}
+		let payload = {
+			email,
+			password,
+		};
+
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			Credentials: 'include',
+			body: JSON.stringify(payload),
+		};
+
+		fetch('/authenticate', requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.error) {
+					setAlertClassName('alert-danger');
+					setAlertMessage(data.message);
+				} else {
+					setJwtToken(data.access_token);
+					setAlertClassName('d-none');
+					setAlertMessage('');
+					navigate('/');
+				}
+			})
+			.catch((error) => {
+				setAlertClassName('alert-danger');
+				setAlertMessage(error);
+			});
 	};
 
 	return (
