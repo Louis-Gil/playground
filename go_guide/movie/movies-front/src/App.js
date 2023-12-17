@@ -10,7 +10,19 @@ function App() {
 	const navigate = useNavigate();
 
 	const logOut = () => {
-		setJwtToken('');
+		const requestOptions = {
+			method: 'GET',
+			Credentials: 'include',
+		};
+
+		fetch(`/logout`, requestOptions)
+			.catch((error) => {
+				console.log('user is not logged in', error);
+			})
+			.finally(() => {
+				setJwtToken('');
+			});
+      
 		navigate('/login');
 	};
 
