@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import Input from './form/input';
+import Input from './form/Input';
 
 const Login = () => {
 	const [email, setEmail] = useState('');
