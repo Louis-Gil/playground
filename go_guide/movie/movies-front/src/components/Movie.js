@@ -6,16 +6,27 @@ const Movie = () => {
 	let { id } = useParams();
 
 	useEffect(() => {
-		let myMovie = {
-			id: 1,
-			title: 'Highlander',
-			release_date: '1986-03-07',
-			runtime: 116,
-			mpaa_rating: 'R',
-			description: 'Some description',
+		const headers = new Headers();
+		headers.append('Content-Type', 'application/json');
+
+		const requestOptions = {
+			method: 'GET',
+			headers: headers,
 		};
-		setMovie(myMovie);
+
+		fetch(`/movies/${id}`, requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				setMovie(data);
+			})
+			.catch((error) => console.log('error', error));
 	}, [id]);
+
+	if (movie.genres) {
+		movie.genres = Object.values(movie.genres);
+	} else {
+		movie.genres = [];
+	}
 
 	return (
 		<div>
@@ -26,7 +37,21 @@ const Movie = () => {
 					{movie.mpaa_rating}
 				</em>
 			</small>
+			{movie.genres.map((g) => (
+				<span key={g.genres} className="badge bg-secondary me-2">
+					{g.genre}
+				</span>
+			))}
 			<hr />
+
+			{movie.image !== '' && (
+				<div className="mb-3">
+					<img
+						src={`https://image.tmdb.org/t/p/w200/${movie.image}`}
+						alt="poster"
+					/>
+				</div>
+			)}
 			<p>{movie.description}</p>
 		</div>
 	);
