@@ -89,6 +89,26 @@ const EditMovie = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+
+		let errors = [];
+		let required = [
+			{ field: movie.title, message: 'title' },
+			{ field: movie.release_date, message: 'release_date' },
+			{ field: movie.runtime, message: 'runtime' },
+			{ field: movie.description, message: 'description' },
+			{ field: movie.mpaa_rating, message: 'mpaa_rating' },
+		];
+
+		required.forEach(function (obj) {
+			if (obj.field === '') {
+				errors.push(obj.message);
+			}
+		});
+
+		setErrors(errors);
+		if (errors.length > 0) {
+			return false;
+		}
 	};
 
 	const handleChange = (name) => (event) => {
@@ -197,6 +217,10 @@ const EditMovie = () => {
 						))}
 					</>
 				)}
+
+        <hr />
+
+        <button className="btn btn-primary">Save</button>
 			</form>
 		</div>
 	);
