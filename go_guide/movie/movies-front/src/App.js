@@ -133,7 +133,7 @@ function App() {
 										Add Movies
 									</Link>
 									<Link
-										to="/manage-catalog"
+										to="/manage-catalogue"
 										className="list-group-item list-group-item-action"
 									>
 										Manage Catalogue

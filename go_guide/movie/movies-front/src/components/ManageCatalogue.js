@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 
-const ManageCatalog = () => {
+const ManageCatalogue = () => {
 	const [movies, setMovies] = useState([]);
 	const { jwtToken } = useOutletContext();
 	const navigate = useNavigate();
@@ -12,10 +11,9 @@ const ManageCatalog = () => {
 			navigate('/login');
 			return;
 		}
-
 		const headers = new Headers();
 		headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', `Bearer ${jwtToken}`)
+		headers.append('Authorization', 'Bearer ' + jwtToken);
 
 		const requestOptions = {
 			method: 'GET',
@@ -27,8 +25,8 @@ const ManageCatalog = () => {
 			.then((data) => {
 				setMovies(data);
 			})
-			.catch((error) => {
-				console.log(error);
+			.catch((err) => {
+				console.log(err);
 			});
 	}, [jwtToken, navigate]);
 
@@ -45,13 +43,13 @@ const ManageCatalog = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{movies.map((movie) => (
-						<tr key={movie.id}>
+					{movies.map((m) => (
+						<tr key={m.id}>
 							<td>
-								<Link to={`/admin/movies/${movie.id}`}>{movie.title}</Link>
+								<Link to={`/admin/movie/${m.id}`}>{m.title}</Link>
 							</td>
-							<td>{movie.release_date}</td>
-							<td>{movie.mpaa_rating}</td>
+							<td>{m.release_date}</td>
+							<td>{m.mpaa_rating}</td>
 						</tr>
 					))}
 				</tbody>
@@ -60,4 +58,4 @@ const ManageCatalog = () => {
 	);
 };
 
-export default ManageCatalog;
+export default ManageCatalogue;

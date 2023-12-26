@@ -19,7 +19,9 @@ const Movie = () => {
 			.then((data) => {
 				setMovie(data);
 			})
-			.catch((error) => console.log('error', error));
+			.catch((err) => {
+				console.log(err);
+			});
 	}, [id]);
 
 	if (movie.genres) {
@@ -37,8 +39,9 @@ const Movie = () => {
 					{movie.mpaa_rating}
 				</em>
 			</small>
+			<br />
 			{movie.genres.map((g) => (
-				<span key={g.genres} className="badge bg-secondary me-2">
+				<span key={g.genre} className="badge bg-secondary me-2">
 					{g.genre}
 				</span>
 			))}
@@ -52,6 +55,7 @@ const Movie = () => {
 					/>
 				</div>
 			)}
+
 			<p>{movie.description}</p>
 		</div>
 	);
