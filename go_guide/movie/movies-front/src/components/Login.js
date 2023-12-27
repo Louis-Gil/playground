@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import Input from './form/input';
+import Input from './form/Input';
 
 const Login = () => {
 	const [email, setEmail] = useState('');
@@ -9,21 +9,43 @@ const Login = () => {
 	const { setJwtToken } = useOutletContext();
 	const { setAlertClassName } = useOutletContext();
 	const { setAlertMessage } = useOutletContext();
+	const { toggleRefresh } = useOutletContext();
 
 	const navigate = useNavigate();
 
 	const handleSummit = (event) => {
 		event.preventDefault();
 
-		if (email === 'admin@apple.com') {
-			setJwtToken('apple');
-			setAlertClassName('d-none');
-			setAlertMessage('');
-			navigate('/');
-		} else {
-			setAlertClassName('alert-danger');
-			setAlertMessage('Invalid email or password.');
-		}
+		let payload = {
+			email,
+			password,
+		};
+
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			Credentials: 'include',
+			body: JSON.stringify(payload),
+		};
+
+		fetch('/authenticate', requestOptions)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.error) {
+					setAlertClassName('alert-danger');
+					setAlertMessage(data.message);
+				} else {
+					setJwtToken(data.access_token);
+					setAlertClassName('d-none');
+					setAlertMessage('');
+					toggleRefresh(true);
+					navigate('/');
+				}
+			})
+			.catch((error) => {
+				setAlertClassName('alert-danger');
+				setAlertMessage(error);
+			});
 	};
 
 	return (

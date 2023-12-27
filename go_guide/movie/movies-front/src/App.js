@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import Alert from './components/Alert';
 
@@ -7,12 +7,83 @@ function App() {
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertClassName, setAlertClassName] = useState('d-none');
 
+	const [tickInterval, setTickInterval] = useState();
+
 	const navigate = useNavigate();
 
 	const logOut = () => {
-		setJwtToken('');
+		const requestOptions = {
+			method: 'GET',
+			Credentials: 'include',
+		};
+
+		fetch(`/logout`, requestOptions)
+			.catch((error) => {
+				console.log('user is not logged in', error);
+			})
+			.finally(() => {
+				setJwtToken('');
+        toggleRefresh(false);
+			});
+
 		navigate('/login');
 	};
+
+	const toggleRefresh = useCallback(
+		(status) => {
+			console.log('clicked');
+
+			if (status) {
+				console.log('turning on ticking');
+				let i = setInterval(() => {
+          const requestOptions = {
+            method: 'GET',
+            Credentials: 'include',
+          };
+
+          fetch(`/refresh`, requestOptions)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.access_token) {
+              setJwtToken(data.access_token);
+            }
+          })
+          .catch((error) => {
+            console.log('user is not logged in');
+          });
+				}, 600000);
+				setTickInterval(i);
+				console.log('setting tick interval to ', i);
+			} else {
+				console.log('turning off ticking');
+				console.log('turning off tick interval ', tickInterval);
+				setTickInterval(null);
+				clearInterval(tickInterval);
+			}
+		},
+		[tickInterval]
+	);
+
+	useEffect(() => {
+		if (jwtToken === '') {
+			const requestOptions = {
+				method: 'GET',
+				Credentials: 'include',
+			};
+
+			fetch(`/refresh`, requestOptions)
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.access_token) {
+						setJwtToken(data.access_token);
+						toggleRefresh(true);
+					}
+				})
+				.catch((error) => {
+					console.log('user is not logged in');
+				});
+		}
+	}, [jwtToken, toggleRefresh]);
 
 	return (
 		<div className="container">
@@ -62,7 +133,7 @@ function App() {
 										Add Movies
 									</Link>
 									<Link
-										to="/manage-catalog"
+										to="/manage-catalogue"
 										className="list-group-item list-group-item-action"
 									>
 										Manage Catalogue
@@ -86,6 +157,7 @@ function App() {
 							setJwtToken,
 							setAlertClassName,
 							setAlertMessage,
+							toggleRefresh,
 						}}
 					/>
 				</div>
