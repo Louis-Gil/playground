@@ -2,10 +2,12 @@ module backend
 
 go 1.21.3
 
+require github.com/golang-jwt/jwt v3.2.2+incompatible
+
 require (
 	github.com/go-chi/chi/v5 v5.0.10 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/graphql-go/graphql v0.8.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
