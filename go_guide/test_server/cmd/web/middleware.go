@@ -47,9 +47,5 @@ func getIP(r *http.Request) (string, error) {
 		ip = forward
 	}
 
-	if len(ip) == 0 {
-		ip = "forward"
-	}
-
 	return ip, nil
 }
