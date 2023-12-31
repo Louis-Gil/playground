@@ -3,25 +3,32 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
+	"image"
+	"image/png"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path"
 	"strings"
+	"sync"
 	"testing"
 )
 
 func Test_application_handlers(t *testing.T) {
 	var theTests = []struct {
-		name               string
-		url                string
-		expectedStatusCode int
-    expectedURL        string
-    expectedFirstStatusCode int
+		name                    string
+		url                     string
+		expectedStatusCode      int
+		expectedURL             string
+		expectedFirstStatusCode int
 	}{
 		{"home", "/", http.StatusOK, "/", http.StatusOK},
 		{"404", "/fish", http.StatusNotFound, "/fish", http.StatusNotFound},
-    {"profile", "/user/profile", http.StatusOK, "/", http.StatusTemporaryRedirect},
+		{"profile", "/user/profile", http.StatusOK, "/", http.StatusTemporaryRedirect},
 	}
 
 	routes := app.routes()
@@ -30,16 +37,21 @@ func Test_application_handlers(t *testing.T) {
 	ts := httptest.NewTLSServer(routes)
 	defer ts.Close()
 
-  tr := &http.Transport{
-    TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-  }
+	// If we want to get the first status code, we have to create our
+	// own http client with a custom CheckRedirect function, and limit
+	// it ot the first response. For testing, we also need to
+	// specify a custom Transport field which accepts insecure
+	// https certificates. First create the custom transport.
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 
-  client := &http.Client{
-    Transport: tr,
-    CheckRedirect: func(req *http.Request, via []*http.Request) error {
-      return http.ErrUseLastResponse
-    },
-  }
+	client := &http.Client{
+		Transport: tr,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 
 	// range through test data
 	for _, e := range theTests {
@@ -53,11 +65,14 @@ func Test_application_handlers(t *testing.T) {
 			t.Errorf("for %s: expected status %d, but got %d", e.name, e.expectedStatusCode, resp.StatusCode)
 		}
 
-    if resp.Request.URL.Path != e.expectedURL {
-      t.Errorf("%s: expected final url of %s but got %s", e.name, e.expectedURL, resp.Request.URL.Path)
-    }
+		if resp.Request.URL.Path != e.expectedURL {
+			t.Errorf("%s: expected final url of %s but got %s", e.name, e.expectedURL, resp.Request.URL.Path)
+		}
 
-    resp2, _ := client.Get(ts.URL + e.url)
+		// Call the test server using our custom  http client
+		// which does not follow redirects, and which has a custom
+		// transport.
+		resp2, _ := client.Get(ts.URL + e.url)
 		if resp2.StatusCode != e.expectedFirstStatusCode {
 			t.Errorf("%s: expected first returned status code to be %d but got %d", e.name, e.expectedFirstStatusCode, resp2.StatusCode)
 		}
@@ -195,5 +210,73 @@ func Test_app_Login(t *testing.T) {
 		} else {
 			t.Errorf("%s: no location header set", e.name)
 		}
+	}
+}
+
+func Test_app_UploadFiles(t *testing.T) {
+	// set up pipes
+	pr, pw := io.Pipe()
+
+	// create a new writer, of type *io.Writer
+	writer := multipart.NewWriter(pw)
+
+	// create a waitgroup, and add 1 to it
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+
+	// simulate uploading a file using a goroutine and our writer
+	go simulatePNGUpload("./testdata/img.png", writer, t, wg)
+
+	// read from the pipe which receives data
+	request := httptest.NewRequest("POST", "/", pr)
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+
+	// call app.UploadFiles
+	uploadedFiles, err := app.UploadFiles(request, "./testdata/uploads/")
+	if err != nil {
+		t.Error(err)
+	}
+
+	// perform our tests
+	if _, err := os.Stat(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].OriginalFileName)); os.IsNotExist(err) {
+		t.Errorf("expected file to exist: %s", err.Error())
+	}
+
+	// clean up
+	err = os.Remove(fmt.Sprintf("./testdata/uploads/%s", uploadedFiles[0].OriginalFileName))
+	if err != nil {
+		t.Error(err)
+	}
+
+  wg.Wait()
+}
+
+func simulatePNGUpload(fileToUpload string, writer *multipart.Writer, t *testing.T, wg *sync.WaitGroup) {
+	defer writer.Close()
+	defer wg.Done()
+
+	// create the form data filed 'file' with value being filename
+	part, err := writer.CreateFormFile("file", path.Base(fileToUpload))
+	if err != nil {
+		t.Error(err)
+	}
+
+	// open the actual file
+	f, err := os.Open(fileToUpload)
+	if err != nil {
+		t.Error(err)
+	}
+	defer f.Close()
+
+	// decode the image
+	img, _, err := image.Decode(f)
+	if err != nil {
+		t.Error("error decoding image:", err)
+	}
+
+	// write the png to our io.Writer
+	err = png.Encode(part, img)
+	if err != nil {
+		t.Error(err)
 	}
 }

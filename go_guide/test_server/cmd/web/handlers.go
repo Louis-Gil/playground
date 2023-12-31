@@ -180,11 +180,11 @@ func (app *application) UploadFiles(r *http.Request, uploadDir string) ([]*Uploa
 				uploadedFile.OriginalFileName = hdr.Filename
 
 				var outfile *os.File
-				defer outfile.Close()
-
+        
 				if outfile, err = os.Create(filepath.Join(uploadDir, uploadedFile.OriginalFileName)); nil != err {
-					return nil, err
-				} else {
+          return nil, err
+          } else {
+          defer outfile.Close()
 					fileSize, err := io.Copy(outfile, infile)
 					if err != nil {
 						return nil, err
