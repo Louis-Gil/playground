@@ -25,8 +25,8 @@ func (app *application) addIPToContext(next http.Handler) http.Handler {
 			if len(ip) == 0 {
 				ip = "unknown"
 			}
-    }
-    ctx = context.WithValue(r.Context(), contextUserKey, ip)
+		}
+		ctx = context.WithValue(r.Context(), contextUserKey, ip)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -48,4 +48,15 @@ func getIP(r *http.Request) (string, error) {
 	}
 
 	return ip, nil
+}
+
+func (app *application) auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !app.Session.Exists(r.Context(), "user") {
+			app.Session.Put(r.Context(), "error", "Log in first!")
+			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
